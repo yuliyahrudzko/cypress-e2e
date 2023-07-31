@@ -1,27 +1,21 @@
 export class homePage {
 
-  elements = {
-    logo: () => cy.get('[alt="Google"]'),
+  ELEMENTS = {
     searchBar: () =>  cy.get('[type="search"]'),
-    firstRequest: () => cy.get('[aria-label="itechart"]'),
-  }
-
-  checkLogo() {
-    this.elements
-        .logo()
-        .should('be.visible');
+    firstResult: () => cy.get('[aria-label="itechart"]'),
+    itechart: 'iTechArt'
   }
   
   typeInSearchBar() {
-    this.elements
+    this.ELEMENTS
         .searchBar()
         .should('be.visible')
-        .type('iTechArt');
+        .type(this.ELEMENTS.itechart);
   }
 
-  getSearchRequest() {
-    this.elements
-        .firstRequest()
+  selectFirstResult() {
+    this.ELEMENTS
+        .firstResult()
         .first()
         .click();
   }

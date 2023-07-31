@@ -1,26 +1,40 @@
 import { homePage } from '../pages/homePage';
-import { resultPage } from '../pages/resultPage';
 
 let home = new homePage();
-let result = new resultPage();
+let companyName = ['iTech', 'Vention'];
+const REGEX = new RegExp(`${companyName.join('|')}`);
+
+const ELEMENTS = {
+  logo: '[alt="Google"]',
+  numberOfResults: '#result-stats',
+  result: '.LC20lb',
+}
 
 describe('Verify Google functionality', () => {
   it('Verify Google search', () => {
 
     cy.intercept('GET','https://www.google.ru/complete/search?q=iTech**').as('getdata');
 
-      cy.visit('https://www.google.ru/');
+    cy.visit('https://www.google.ru/');
 
-      home.checkLogo();
+    cy.get(ELEMENTS.logo).should('be.visible');
 
-      home.typeInSearchBar();
+    home.typeInSearchBar();
 
-      home.getSearchRequest();
+    home.selectFirstResult();
 
-      cy.wait('@getdata').its('response.statusCode').should('eq', 200);
+    cy.wait('@getdata').its('response.statusCode').should('eq', 200);
 
-      result.postResult();
+    cy.get(ELEMENTS.numberOfResults)
+      .then($element => { 
+        cy.log($element.text().slice(12, 20));
+      })
 
-      result.checkEachResult();
+    cy.get(ELEMENTS.result)
+      .each(($element) => {
+        expect($element).contains(REGEX)        
+        cy.log($element.text() + '  релевантен запросу');
+      })
+
   })
 }) 
